@@ -17,6 +17,8 @@ import { firestore } from '@/firebase';
 import { Configuration, OpenAIApi } from "openai";
 import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
+
 
 import OpenAI from "openai";
 
@@ -44,7 +46,7 @@ export default function Home() {
       )}. Provide only the recipe name and a Google search link seperated by a comma.`;
 
       const completion = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
+        model: "gpt-4o-mini",
         messages: [{ role: "user", content: prompt }],
         max_tokens: 100,
       });
@@ -117,47 +119,47 @@ export default function Home() {
   }, []);
 
   return (
-    <Box 
-      width="100vw"
-      height="100vh"
-      display="flex"
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      gap={3}
-      sx={{
-        backgroundColor: "#f5f5f5",
-      }}
-    >
+    <Box
+    width="100vw"
+    height="100vh"
+    display="flex"
+    flexDirection="column"
+    justifyContent="center"
+    alignItems="center"
+    gap={3}
+    sx={{
+      backgroundColor: "#ffffff", // Set background to white
+    }}
+  >
       <Modal open={open} onClose={handleClose}>
-        <Box 
-          position="absolute"
-          top="50%"
-          left="50%"
-          width={400}
-          bgcolor="white"
-          borderRadius={2}
-          boxShadow={24}
-          p={4}
-          display="flex"
-          flexDirection="column"
-          gap={3}
-          sx={{
-            transform: "translate(-50%, -50%)",
-          }}
-        >
-          <Typography variant="h6" fontWeight="bold">
-            Add Item
-          </Typography>
+      <Box
+  position="absolute"
+  top="50%"
+  left="50%"
+  width={400}
+  bgcolor="white" // White background
+  borderRadius={2}
+  boxShadow={24}
+  p={4}
+  display="flex"
+  flexDirection="column"
+  gap={3}
+  sx={{
+    transform: "translate(-50%, -50%)",
+  }}
+>
+  <Typography variant="h6" fontWeight="bold" color="#333">
+    Add Item
+  </Typography>
           <Stack width="100%" direction="column" spacing={2}>
-            <TextField 
+            <TextField
               label="Item Name"
               variant="outlined"
               fullWidth
               value={itemName}
               onChange={(e) => setItemName(e.target.value)}
             />
-            <TextField 
+            <TextField
               label="Quantity"
               type="number"
               variant="outlined"
@@ -171,16 +173,16 @@ export default function Home() {
             <Button
               variant="contained"
               onClick={() => {
-                addItem(itemName, itemQuantity);
+                addItem(itemName, itemQuantity); // Use custom quantity from modal
                 setItemName("");
-                setItemQuantity(1);
+                setItemQuantity(1); // Reset quantity to default value
                 handleClose();
               }}
               sx={{
-                backgroundColor: "#32de84",
+                backgroundColor: "#007bff",
                 color: "#333",
                 "&:hover": {
-                  backgroundColor: "#28c76f",
+                  backgroundColor: "#0056b3",
                 },
               }}
             >
@@ -189,116 +191,276 @@ export default function Home() {
           </Stack>
         </Box>
       </Modal>
-
-      <Button variant="contained" onClick={handleOpen} sx={{ bgcolor: "#32de84", color: "#333", "&:hover": { bgcolor: "#28c76f" } }}>
-        Add New Item
-      </Button>
-      <Button
-          variant="contained"
-          onClick={() => {
-            getRecipeSuggestions();
-            setRecipeModalOpen(true);
-          }}
-          disabled={isLoading}
-          sx={{
-            backgroundColor: "#32de84",
-            color: "#fff",
-            "&:hover": {
-              backgroundColor: "#28c76f",
-            },
-            "&:disabled": {
-              backgroundColor: "#a0a0a0",
-            },
-            padding: "10px 20px",
-            borderRadius: 2,
-            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-          }}
-        >
-          {isLoading ? "Loading..." : "Get Recipe Suggestion"}
-        </Button>
-      <Box border={'1px solid #333'} borderRadius={2} overflow="hidden" sx={{ width: '800px', backgroundColor: 'white' }}>
-        <Box
-          width="100%"
-          height="100px"
-          bgcolor={'#ADD8E6'}
-          display={'flex'}
-          justifyContent={'center'}
-          alignItems={'center'}
-        >
-          <Typography variant={'h2'} color={'#333'} textAlign={'center'}>
-            Inventory Items
-          </Typography>
-        </Box>
-        <Stack width="100%" maxHeight="300px" spacing={2} overflow={'auto'} sx={{ padding: 2 }}>
-          {filteredInventory.map(({name, quantity}) => (
-            <Box
-              key={name}
-              width="100%"
-              minHeight="100px"
-              display={'flex'}
-              justifyContent={'space-between'}
-              alignItems={'center'}
-              bgcolor={'#f0f0f0'}
-              padding={2}
-              borderRadius={2}
-            >
-              <Typography variant={'h6'} color={'#333'}>
-                {name.charAt(0).toUpperCase() + name.slice(1)}
-              </Typography>
-              <Typography variant={'h6'} color={'#333'}>
-                Quantity: {quantity}
-              </Typography>
-              <Button variant="contained" onClick={() => removeItem(name)} sx={{ bgcolor: "#ff4c4c", color: "#fff", "&:hover": { bgcolor: "#e04444" } }}>
-                Remove
-              </Button>
-            </Box>
-          ))}
-        </Stack>
-      </Box>
-
       <Modal open={recipeModalOpen} onClose={() => setRecipeModalOpen(false)}>
-        <Box 
+        <Box
           position="absolute"
           top="50%"
           left="50%"
-          width={600}
+          width={400}
           bgcolor="white"
           borderRadius={2}
           boxShadow={24}
           p={4}
+          display="flex"
+          flexDirection="column"
+          gap={3}
           sx={{
             transform: "translate(-50%, -50%)",
+            maxWidth: "80%",
+            maxHeight: "80%",
+            overflow: "auto",
           }}
         >
-          <Typography variant="h6" fontWeight="bold" mb={2}>
+          <Typography
+            variant="h5"
+            fontWeight="bold"
+            color="#007bff"
+            textAlign="center"
+          >
             Recipe Suggestions
           </Typography>
+          <Divider />
           {isLoading ? (
-            <Typography>Loading...</Typography>
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              py={4}
+            >
+              <CircularProgress color="success" />
+            </Box>
           ) : (
-            <Stack spacing={2}>
-              {recipeSuggestions.map((recipe, index) => (
-                
-                <Typography key={index}>{recipe}</Typography>
-              ))}
+            <Stack width="100%" direction="column" spacing={2}>
+              {recipeSuggestions.map((suggestion, index) => {
+            const [recipeName, searchLink] = suggestion.split(",");
+
+            let cleanLink = "";
+            if (searchLink) {
+                // Extract the actual URL from the searchLink
+                const linkMatch = searchLink.match(/\bhttps?:\/\/\S+/gi);
+                cleanLink = linkMatch ? linkMatch[0] : searchLink.trim();
+            }
+
+            return (
+                <Box key={index} bgcolor="#f5f5f5" p={2} borderRadius={1}>
+                    <Typography
+                        variant="h6"
+                        color="#333"
+                        gutterBottom
+                        textAlign="center"
+                    >
+                        {recipeName.trim()}
+                    </Typography>
+                    {cleanLink && (
+                        <Typography
+                            component="a"
+                            href={cleanLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            sx={{
+                                color: "#007bff",
+                                textDecoration: "none",
+                                "&:hover": {
+                                    textDecoration: "underline",
+                                },
+                                display: "block",
+                                textAlign: "center",
+                            }}
+                        >
+                            View Recipe
+                        </Typography>
+                    )}
+                </Box>
+            );
+        })}
+
             </Stack>
           )}
           <Button
             variant="contained"
             onClick={() => setRecipeModalOpen(false)}
             sx={{
-              mt: 3,
-              backgroundColor: "#32de84",
-              color: "#333",
+              backgroundColor: "#007bff",
+              color: "#fff",
               "&:hover": {
                 backgroundColor: "#28c76f",
               },
+              alignSelf: "center",
+              mt: 2,
             }}
           >
             Close
           </Button>
         </Box>
       </Modal>
+
+      <Stack
+        direction="column"
+        spacing={3}
+        alignItems="center"
+        marginBottom={2}
+        sx={{ width: "80%", maxWidth: 800 }}
+      >
+        <TextField
+          variant="outlined"
+          fullWidth
+          placeholder="Search Pantry"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              "&:hover fieldset": {
+                borderColor: "#32de84",
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "#32de84",
+              },
+            },
+          }}
+        />
+  <Button
+  variant="contained"
+  onClick={() => {
+    handleOpen();
+  }}
+  sx={{
+    backgroundColor: "#007bff", // Primary blue color
+    color: "#fff", 
+    "&:hover": {
+      backgroundColor: "#0056b3", // Darker blue on hover
+    },
+    padding: "10px 20px",
+    borderRadius: 2,
+    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)", // Slight shadow for depth
+  }}
+>
+  Add New Item
+</Button>
+
+<Button
+  variant="contained"
+  onClick={() => {
+    getRecipeSuggestions();
+    setRecipeModalOpen(true);
+  }}
+  disabled={isLoading}
+  sx={{
+    backgroundColor: "#007bff", // Primary blue color
+    color: "#fff",
+    "&:hover": {
+      backgroundColor: "#0056b3", // Darker blue on hover
+    },
+    "&:disabled": {
+      backgroundColor: "#a0a0a0", // Gray color when disabled
+    },
+    padding: "10px 20px",
+    borderRadius: 2,
+    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)", // Consistent shadow effect
+  }}
+>
+  {isLoading ? "Loading..." : "Get Recipe Suggestion"}
+</Button>
+
+      </Stack>
+      <Box
+        border="1px solid #ddd" // Use a light border
+        borderRadius="16px"
+        overflow="hidden"
+        sx={{ width: "80%", maxWidth: 800 }}
+      >
+
+        <Box
+          width="100%"
+          height="100px"
+          bgcolor="#007bff" // Solid color for header
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Typography variant="h4" color="#000000
+" fontWeight="bold">
+            Pantry Tracker
+          </Typography>
+        </Box>
+
+
+        <Stack
+          width="100%"
+          maxHeight="400px"
+          spacing={2}
+          overflow="auto"
+          sx={{
+            "&::-webkit-scrollbar": {
+              width: "0.4em",
+            },
+            "&::-webkit-scrollbar-track": {
+              boxShadow: "inset 0 0 6px rgba(0,0,0,0.1)",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "rgba(0,0,0,0.3)",
+              borderRadius: 2,
+            },
+          }}
+        >
+          {filteredInventory.map(({ name, quantity }) => (
+            <Box
+              key={name}
+              width="100%"
+              minHeight="80px"
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+              bgcolor="#fff"
+              padding={2}
+              borderBottom="1px solid #ddd"
+              sx={{
+                "&:last-child": {
+                  borderBottom: "none",
+                },
+              }}
+            >
+              <Typography variant="h6" color="#333">
+                {name.charAt(0).toUpperCase() + name.slice(1)}
+              </Typography>
+
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Button
+                  variant="text"
+                  onClick={() => {
+                    addItem(name);
+                  }}
+                  sx={{
+                    color: "#32de84",
+                  }}
+                >
+                  <AddIcon />
+                </Button>
+                <Typography variant="h6" color="#333">
+                  {quantity}
+                </Typography>
+                <Button
+                  variant="text"
+                  onClick={() => {
+                    removeItem(name);
+                  }}
+                  sx={{
+                    color: "#f44336",
+                  }}
+                >
+                  <RemoveIcon />
+                </Button>
+              </Stack>
+            </Box>
+          ))}
+        </Stack>
+      </Box>
     </Box>
-  )
+  );
 }
