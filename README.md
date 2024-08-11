@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Pantry Tracker
+
+Pantry Tracker is a web application designed to help you manage your pantry items efficiently and receive AI-driven recipe suggestions based on the ingredients you have on hand. This application utilizes Firebase for backend services and the OpenAI API for intelligent recipe recommendations.
+
+## Features
+
+- Effortlessly track and manage pantry items.
+- Add, update, and remove items from your pantry inventory.
+- Receive AI-generated recipe suggestions tailored to your available ingredients.
+- Quick search functionality to easily locate pantry items.
+- User-friendly and intuitive interface for a seamless experience.
+
+## Demo
+
+Explore the live version of the application [here](https://pantry-tracker-beta-one.vercel.app/).
 
 ## Getting Started
 
-First, run the development server:
+To run the project locally, follow these instructions:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Prerequisites
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Ensure Node.js and npm are installed on your machine.
+- Set up a Firebase account and project to obtain your `NEXT_PUBLIC_FIREBASE_API_KEY`.
+- Register for an OpenAI account to obtain your `NEXT_PUBLIC_OPENAI_API_KEY`.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Technologies Used
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Pantry Tracker is built with modern web technologies:
 
-## Learn More
+- **Next.js**: A powerful React framework for building server-rendered and statically generated web applications.
+- **Firebase**: A comprehensive platform providing backend services like authentication and real-time databases.
+- **Material-UI (MUI)**: A popular React UI framework that implements Google's Material Design principles.
+- **OpenAI API**: Used to generate AI-powered recipe suggestions based on your pantry's contents.
 
-To learn more about Next.js, take a look at the following resources:
+### Installation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Clone the repository:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+   ```bash
+   git clone https://github.com/mago223/pantry-tracker.git
+   cd pantry-tracker
